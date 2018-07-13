@@ -1,12 +1,14 @@
 buildscript {
 	ext {
 		springBootVersion = '2.0.3.RELEASE'
+        dockerPluginVersion            = '1.2'
 	}
 	repositories {
 		mavenCentral()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("se.transmode.gradle:gradle-docker:${dockerPluginVersion}")
 	}
 }
 
@@ -14,6 +16,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
+apply plugin: 'docker'
 
 group = 'com.adesso'
 version = '0.0.1-SNAPSHOT'
@@ -27,6 +30,17 @@ repositories {
 ext {
 	springCloudVersion = 'Finchley.RELEASE'
 }
+task buildDocker(type: Docker, dependsOn: build) {
+    dockerfile = file('src/main/docker/Dockerfile')
+    tagVersion = 'latest'
+    tag = "myService/${project.name}"
+    doFirst {
+        copy {
+            from jar
+            into stageDir
+        }
+    }
+}
 
 dependencies {
 	compile('org.springframework.cloud:spring-cloud-starter-netflix-eureka-server')
@@ -37,4 +51,9 @@ dependencyManagement {
 	imports {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
 	}
+}
+bootRun {
+    if (project.hasProperty('args')) {
+        args project.args.split('\\s+')
+    }
 }
