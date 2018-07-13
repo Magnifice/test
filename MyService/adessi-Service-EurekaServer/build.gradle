@@ -30,8 +30,15 @@ repositories {
 ext {
 	springCloudVersion = 'Finchley.RELEASE'
 }
+
+jar {
+    manifest { attributes 'Main-Class': 'com.adesso.adessiServiceEurekaServer.AdessiServiceEurekaServerApplication' }
+    baseName = 'eureka'
+    exclude 'static/swagger/'
+}
+
 task buildDocker(type: Docker, dependsOn: build) {
-    dockerfile = file('src/main/docker/Dockerfile')
+    dockerfile = file('Dockerfile')
     tagVersion = 'latest'
     tag = "myService/${project.name}"
     doFirst {
