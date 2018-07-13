@@ -64,3 +64,4 @@ bootRun {
         args project.args.split('\\s+')
     }
 }
+task wrapper(type: Wrapper) { gradleVersion = '2.12' }
