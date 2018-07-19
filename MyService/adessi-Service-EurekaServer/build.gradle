@@ -38,9 +38,9 @@ jar {
 }
 
 task buildDocker(type: Docker, dependsOn: build) {
-    dockerfile = file('dockerfile')
+    dockerfile = file('Dockerfile')
     tagVersion = 'latest'
-    tag = "myService/${project.name}"
+    tag = "myService/adessi-service-eurekaserver"
     doFirst {
         copy {
             from jar
